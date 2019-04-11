@@ -162,7 +162,7 @@ if ($action == 'export_csv')
 		print $object->get_compte_desc($line->numero_compte) . $sep;
 		print price($line->debit) . $sep;
 		print price($line->credit) . $sep;
-		print price($line->credit - $line->debit) . $sep;
+		print price($line->debit - $line->credit) . $sep;
 		print "\n";
 	}
 }
@@ -267,7 +267,7 @@ else {
 		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
-				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_debit - $sous_total_credit) . '</td>';
 				print "<td>&nbsp;</td>\n";
 				print '</tr>';
 			}
@@ -288,7 +288,7 @@ else {
 		print '<td>' . $description . '</td>';
 		print '<td align="right">' . price($line->debit) . '</td>';
 		print '<td align="right">' . price($line->credit) . '</td>';
-		print '<td align="right">' . price($line->credit - $line->debit) . '</td>';
+		print '<td align="right">' . price($line->debit - $line->credit) . '</td>';
 		print '<td align="center">' . $link;
 		print '</td>';
 		print "</tr>\n";
@@ -298,11 +298,11 @@ else {
 		$sous_total_credit += $line->credit;
 	}
 
-	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_debit - $sous_total_credit) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
-	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price($total_credit - $total_debit) . '</td>';
+	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price($total_debit - $total_credit) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
