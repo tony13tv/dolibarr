@@ -697,7 +697,6 @@ if ($action == 'create')
 	// Date end
 	$datef=($datef?$datef:$object->datef);
     if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
-	else $datef = dol_stringtotime(GETPOST('datep', 'int', 1), 0) + 3600;
 	if (empty($datef) && ! empty($datep) && ! empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS))
 	{
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');

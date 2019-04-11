@@ -5066,10 +5066,15 @@ class Form
 			// Show hour
 			$retstring.='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50 '.($fullday?$fullday.'hour':'').'" id="'.$prefix.'hour" name="'.$prefix.'hour">';
 			if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
-			for ($hour = 0; $hour < 24; $hour++)
+			for ($hour = 0; $hour < 12; $hour++)
 			{
 				if (strlen($hour) < 2) $hour = "0" . $hour;
-				$retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
+				$retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.((($hour+11)%12)+1).(empty($conf->dol_optimize_smallscreen)?'':'H').' a.m.</option>';
+			}
+			for ($hour = 12; $hour < 24; $hour++)
+			{
+				if (strlen($hour) < 2) $hour = "0" . $hour;
+				$retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.((($hour+11)%12)+1).(empty($conf->dol_optimize_smallscreen)?'':'H').' p.m.</option>';
 			}
 			$retstring.='</select>';
 			if ($m && empty($conf->dol_optimize_smallscreen)) $retstring.=":";
