@@ -256,14 +256,14 @@ else {
 		$total_debit += $line->debit;
 		$total_credit += $line->credit;
 		$description = $object->get_compte_desc($line->numero_compte); // Search description of the account
-		$root_account_description = $object->get_compte_racine($line->numero_compte);
+		$root_account = $object->get_compte_racine($line->numero_compte);
 		if (empty($description)) {
 			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
 		print '<tr class="oddeven">';
 
 		// Permet d'afficher le compte comptable
-		if (empty($displayed_account) || $root_account_description != $displayed_account)
+		if (empty($displayed_account) || $root_account['label'] != $displayed_account)
 		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
@@ -274,10 +274,10 @@ else {
 
 			// Affiche le compte comptable en debut de ligne
 			print "<tr>";
-			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
+			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $root_account['account_number'] . ($root_account['label'] ? ' - ' . $root_account['label'] : '') . '</td>';
 			print '</tr>';
 
-			$displayed_account = $root_account_description;
+			$displayed_account = $root_account['label'];
 			$sous_total_debit = 0;
 			$sous_total_credit = 0;
 		}

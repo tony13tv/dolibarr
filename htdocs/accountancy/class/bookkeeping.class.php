@@ -1762,7 +1762,7 @@ class BookKeeping extends CommonObject
 	 * Description of a root accounting account
 	 *
 	 * @param 	string 	$account	Accounting account
-	 * @return 	string 				Root account
+	 * @return 	mixed|string 				Root account
 	 */
 	function get_compte_racine($account = null)
 	{
@@ -1785,10 +1785,10 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$obj = '';
 			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
+				$obj = $this->db->fetch_array($resql);
 			}
 
-			return $obj->label;
+			return $obj;
 
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
