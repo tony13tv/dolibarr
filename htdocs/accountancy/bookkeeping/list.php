@@ -78,6 +78,7 @@ $search_direction = GETPOST('search_direction', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_import_key = GETPOST('search_import_key', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -140,6 +141,7 @@ $arrayfields=array(
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
+	't.import_key' => array('label' => $langs->trans("ImportKey"), 'checked' => 0),
 );
 
 
@@ -262,6 +264,10 @@ if (! empty($search_date_modification_end)) {
 	$filter['t.tms<='] = $search_date_modification_end;
 	$tmp=dol_getdate($search_date_modification_end);
 	$param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
+}
+if (! empty($search_import_key)) {
+	$filter['t.import_key'] = $search_import_key;
+	$param .= '&search_import_key=' . urlencode($search_import_key);
 }
 if (! empty($search_debit)) {
 	$filter['t.debit'] = $search_debit;
@@ -437,6 +443,13 @@ else $button.= $langs->trans("ExportList");
 //$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
 $button.= '</a>';
 
+$button .= '<a class="butAction" name="button_export_file" href="/accountancy/bookkeeping/fix.php">';
+$button .= $langs->trans("Asignar Núm. de Transacción");
+$button .= '</a>';
+
+$button .= '<a class="butAction" name="button_export_file" href="/imports/import.php?step=3&format=csv&datatoimport=accounting_1&excludefirstline=1&separator=%3B&enclosure=\"">';
+$button .= $langs->trans("Importar Listado");
+$button .= '</a>';
 
 $groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
 $newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewAccountingMvt").'</span>';
@@ -578,6 +591,11 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '</div>';
 	print '</td>';
 }
+// Date modification
+if (!empty($arrayfields['t.import_key']['checked'])) {
+	print '<td class="liste_titre center"><input type="text" name="search_import_key" size="3" value="' . $search_import_key . '"></td>';
+
+}
 // Action column
 print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
@@ -597,6 +615,7 @@ if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($ar
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.import_key']['checked']))           print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER['PHP_SELF'], "t.import_key", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -642,7 +661,16 @@ if ($num > 0)
 		// Account number
 		if (! empty($arrayfields['t.numero_compte']['checked']))
 		{
-			print '<td>' . length_accountg($line->numero_compte) . '</td>';
+			$numero_compte = '';
+			if (!empty($conf->accounting->enabled)) {
+				require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch('', $line->numero_compte, 1);
+				$numero_compte = $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			} else {
+				$numero_compte = length_accountg($line->numero_compte);
+			}
+			print '<td>' .$numero_compte . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -700,6 +728,12 @@ if ($num > 0)
 		{
 			print '<td align="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Llave de importación
+		if (!empty($arrayfields['t.import_key']['checked'])) {
+			print '<td align="center">' . $line->import_key . '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Action column
