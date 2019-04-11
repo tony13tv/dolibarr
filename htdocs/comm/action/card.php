@@ -870,7 +870,7 @@ __HTML__;
 			if (!empty($user->societe_id)) {
 				print $form->select_company($user->societe_id, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
 			} else {
-				print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
+				print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300 maxwidth500');
 			}
 
 		}
