@@ -1086,7 +1086,7 @@ class Form
 		}
 
 		// On recherche les societes
-		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.address, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.entity IN (".getEntity('societe').")";
@@ -1165,9 +1165,13 @@ class Form
 						$label=$obj->name;
 					}
 
-					if(!empty($obj->name_alias)) {
-						$label.=' ('.$obj->name_alias.')';
-					}
+                    if(!empty($obj->name_alias)) {
+                        $label.=' (@ '.$obj->name_alias.')';
+                    }
+
+                    if(!empty($obj->address)) {
+                        $label.=' (# '.$obj->address.')';
+                    }
 
 					if ($showtype)
 					{
