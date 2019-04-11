@@ -697,6 +697,7 @@ if ($action == 'create')
 	// Date end
 	$datef=($datef?$datef:$object->datef);
     if (GETPOST('datef','int',1)) $datef=dol_stringtotime(GETPOST('datef','int',1),0);
+	else $datef = dol_stringtotime(GETPOST('datep', 'int', 1), 0) + 3600;
 	if (empty($datef) && ! empty($datep) && ! empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS))
 	{
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
@@ -705,6 +706,23 @@ if ($action == 'create')
 	if (GETPOST("afaire") == 1) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	else $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	print <<<__HTML__
+<script>
+$(document).ready(function(){
+    $('#apButtonNow').click(function(e){
+        $('#p2hour').val(('0' + (parseInt($('#aphour').val()) + 1)).substr(-2))
+        $('#p2min').val(('0' + (parseInt($('#apmin').val()))).substr(-2))
+        $('#p2').val($('#ap').val())
+    });
+    $('#aphour').click(function() {
+        $('#p2hour').val(('0' + (parseInt($('#aphour').val()) + 1)).substr(-2))
+    });
+    $('#ap').change(function() {
+        $('#p2').val($('#ap').val())
+    })
+});
+</script>
+__HTML__;
 	print '</td></tr>';
 
 	$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);	// Dev in progress
@@ -715,8 +733,14 @@ if ($action == 'create')
 		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
 		$arrayrecurrulefreq=array(
 		'no'=>$langs->trans("No"),
-		'MONTHLY'=>$langs->trans("EveryMonth"),
-		'WEEKLY'=>$langs->trans("EveryWeek"),
+		'WEEKLY' => $langs->trans("EveryWeek"),
+		'FORTNIGHT' => $langs->trans("Quincenal"),
+		'MONTHLY' => $langs->trans("EveryMonth"),
+		'BIMONTHLY' => $langs->trans("Bimestral"),
+		'QUARTERLY' => $langs->trans("Quarterly"),
+		'THIRDLY' => $langs->trans("Cuatrimestral"),
+		'BIANNUAL' => $langs->trans("Semestral"),
+		'ANNUAL' => $langs->trans("Annual"),
 		//'DAYLY'=>$langs->trans("EveryDay")
 		);
 		$selectedrecurrulefreq='no';
@@ -738,7 +762,7 @@ if ($action == 'create')
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
-						if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
+						if ([\'MONTHLY\', \'BIMONTHLY\', \'QUARTERLY\', \'THIRDLY\', \'BIANNUAL\',\'ANNUAL\'].indexOf(jQuery("#recurrulefreq").val()) > 0)
 						{
 							jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
 							jQuery(".repeateventBYDAY").hide();
@@ -1067,6 +1091,23 @@ if ($id > 0)
 		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		//else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
 		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		print <<<__HTML__
+<script>
+$(document).ready(function(){
+    $('#apButtonNow').click(function(e){
+        $('#p2hour').val(('0' + (parseInt($('#aphour').val()) + 1)).substr(-2))
+        $('#p2min').val(('0' + (parseInt($('#apmin').val()))).substr(-2))
+        $('#p2').val($('#ap').val())
+    })
+    $('#aphour').click(function() {
+        $('#p2hour').val(('0' + (parseInt($('#aphour').val()) + 1)).substr(-2))
+    });
+    $('#ap').change(function() {
+        $('#p2').val($('#ap').val())
+    })
+});
+</script>
+__HTML__;
 		print '</td></tr>';
 
 		$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);	// Dev in progress
